@@ -14,6 +14,6 @@ def get_project_root_path() -> str:
     return os.path.dirname(double_backslash_to_slash(str(__file__)))
 
 
-COLOUR_PALLETTE_HEX = ["#8cffd3", "#5AA9E6", "#ffbc42", "#d81159"]
+COLOUR_PALLETTE_HEX = ["#2EC4B6", "#CBF3F0", "#FFBF69", "#FF9F1C"]
 
 ANNUAL_TRADING_DAYS = 260
