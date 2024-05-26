@@ -1,4 +1,4 @@
-import pandas as pd
+import polars as pl
 
 
 def _filter_duplicate_columns_to_newest_and_longest(dataframe):
@@ -19,6 +19,6 @@ def sanity_clean_data(dataframe):
     frames and help prevent any problems upstream and reduce repeated code. Any cleaning
     here works if applied to a dataframe thats alreadu cleaned
     """
-    dataframe.index = pd.to_datetime(dataframe.index)
+    dataframe.index = pl.to_datetime(dataframe.index)
     dataframe = dataframe.sort_index()
     return dataframe

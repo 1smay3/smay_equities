@@ -3,14 +3,14 @@ Calls to the FMP API service and then creates DataFrames / higher level types fr
 """
 
 import logging
-from typing import Dict, List, Optional
+from typing import List
 
-import pandas as pd
+import polars as pl
 from fmpsdk.url_methods import __return_json_v3
 
 import repository.fmp_api_service as api_service
+from data.processing.polars import concatenate_dataframes
 from fmp.models.stock import Stock
-from utils.extensions import safe_list
 
 # Create a logger
 logger = logging.getLogger(__name__)
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def _parse_and_filter_symbol_list(
     symbol_list: List[Stock], filter_dictionary: dict
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     """
     Get the symbnol list from the data API, and filter_dictionary to only
     the conditions passed by the user, e.g:
@@ -27,12 +27,12 @@ def _parse_and_filter_symbol_list(
         Unadjusted list from the API
     :param filter_dictionary
         Dictionary of conditions to filter_dictionary on in the form
-        "column_name":"condition", as we pass symbol_list to a pd.DataFrame
-    :return: [pd.DataFrame]
-        [pd.DataFrame] version of JSON from API, filtered given the conditions provided
+        "column_name":"condition", as we pass symbol_list to a pl.DataFrame
+    :return: [pl.DataFrame]
+        [pl.DataFrame] version of JSON from API, filtered given the conditions provided
     """
 
-    dataframe = pd.DataFrame(symbol_list)
+    dataframe = pl.DataFrame(symbol_list)
 
     if (
         not filter_dictionary
@@ -96,7 +96,7 @@ def gather_detailed_prices(api_key, symbol):
     from the API and pass to a pandas DataFrame
     """
     historical_prices_resp = api_service.get_historic_prices(api_key)
-    detailed_prices = pd.DataFrame(historical_prices_resp).set_index("date")
+    detailed_prices = pl.DataFrame(historical_prices_resp).set_index("date")
     return detailed_prices
 
 
@@ -109,7 +109,7 @@ def gather_symbols_from_index(symbol):
     in the index in the 70s or so, showing the benefit in the complete list
     """
     raw_constituents = api_service.get_constituents(symbol)
-    constituents_dataframe = pd.DataFrame(raw_constituents)
+    constituents_dataframe = pl.DataFrame(raw_constituents)
 
     # TODO: Consolidate "sorted"
     mapped = constituents_dataframe.map(lambda constituent: constituent.symbol)
@@ -128,7 +128,8 @@ def gather_symbols_from_index_no_survivorship(symbol):
     return no_duplicates_list
 
 
-def gather_simple_prices(symbols_strings, field="adjClose") -> pd.DataFrame:
+PRICES_DATETIME_FORMAT = "%Y-%m-%d"
+def gather_simple_prices(symbols_strings, field="adjClose") -> pl.DataFrame:
     """
     Function to be exposed externally to gather prices for many tickers for a single
     field. This is intended to use as to get our (dates x stocks) format
@@ -137,10 +138,12 @@ def gather_simple_prices(symbols_strings, field="adjClose") -> pd.DataFrame:
     prices = api_service.get_historic_prices(symbols_strings)
     for price_info in prices:
         if price_info:
-            simple_prices_df = pd.DataFrame(price_info["historical"]).set_index("date")[
-                field
-            ]
-            simple_prices_df.name = price_info["symbol"]
+            simple_prices_df = pl.DataFrame(price_info["historical"])[["date", field]]
+            simple_prices_df = simple_prices_df.with_columns(pl.col("date").str.strptime(pl.Date, format=PRICES_DATETIME_FORMAT, strict=False))
+            simple_prices_df = simple_prices_df.rename({"adjClose": price_info["symbol"]})
             all_symbols_data.append(simple_prices_df)
 
-    return pd.concat(all_symbols_data, axis=1)
+    return concatenate_dataframes(all_symbols_data).sort("date")
+
+
+

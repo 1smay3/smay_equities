@@ -6,7 +6,7 @@ and passes the processed
 import os
 from typing import Optional
 
-import pandas as pd
+import polars as pl
 
 from config import ANNUAL_TRADING_DAYS, PRICE_FIELD_NAME
 from data.processing.generic import sanity_clean_data
@@ -36,7 +36,7 @@ class SingleStockDataStore:
         )
 
         # Load raw data from file
-        self.raw_single_stock_data = pd.read_pickle(self.raw_single_stock_data_path)
+        self.raw_single_stock_data = pl.read_pickle(self.raw_single_stock_data_path)
 
         # Process data and generate attributes
         self.adjusted_close = sanity_clean_data(
@@ -65,7 +65,7 @@ class IndexLevelDataStore:
         )
 
         # Load raw data from file
-        self.raw_index_level_data = pd.read_pickle(self.raw_index_level_data_path)
+        self.raw_index_level_data = pl.read_pickle(self.raw_index_level_data_path)
 
         # Process data and generate attributes
         self.adjusted_close = sanity_clean_data(
