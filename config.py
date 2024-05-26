@@ -1,4 +1,5 @@
-""" Centralised Static variables, currently just to limit the API calls given the rate limit """
+"""Centralised Static variables, currently just to limit the API calls given the rate limit"""
+
 import os
 
 from utils.extensions import double_backslash_to_slash

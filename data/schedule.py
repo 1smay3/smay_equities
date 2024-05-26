@@ -1,5 +1,6 @@
-""" Static mappings for what data to gather for each instrument type, to make it easy
+"""Static mappings for what data to gather for each instrument type, to make it easy
 to get new fields for new instruments when extending functionality later on"""
+
 from fmp import fmp_data
 
 # Mapping that defines what data to pull for what filters

@@ -1,18 +1,20 @@
-""" SingleStockData class which takes in the raw response from the API
+"""SingleStockData class which takes in the raw response from the API
 which is often prices of fundamental data, and then applies pre-processing
 and passes the processed
 
 """
+
 import os
-from typing import Optional
 
 import polars as pl
 
-from config import ANNUAL_TRADING_DAYS, PRICE_FIELD_NAME
+from config import PRICE_FIELD_NAME
 from data.processing.generic import sanity_clean_data
-from data.processing.prices import (calculate_daily_return,
-                                    calculate_implied_market_return,
-                                    calculate_trailing_volatility)
+from data.processing.prices import (
+    calculate_daily_return,
+    calculate_implied_market_return,
+    calculate_trailing_volatility,
+)
 from definitions import ROOT_DIR
 from factor_model.beta.beta import compute_rolling_beta
 

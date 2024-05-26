@@ -21,7 +21,9 @@ def convert_trades_to_impulses(datastore_oject: DataStore) -> pl.DataFrame:
 
         impulses_frame = symbol_data.groupby(["dateRecieved"])[["direction"]].sum()
         impulses_frame.index = pl.to_datetime(impulses_frame.index)
-        impulses_frame = impulses_frame.reindex(pl.date_range(impulses_frame.index[0], impulses_frame.index[-1], freq="B"))
+        impulses_frame = impulses_frame.reindex(
+            pl.date_range(impulses_frame.index[0], impulses_frame.index[-1], freq="B")
+        )
         impulses_frame.columns = [symbol]
         impulses_data.append(impulses_frame)
 

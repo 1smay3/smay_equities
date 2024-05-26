@@ -4,11 +4,13 @@ import logging
 
 import click
 
-from data.schedule import (data_name_to_endpoint_mapping,
-                           index_level_data_mapping,
-                           index_level_symbol_mapping,
-                           map_field_name_to_function,
-                           single_stock_data_mapping)
+from data.schedule import (
+    data_name_to_endpoint_mapping,
+    index_level_data_mapping,
+    index_level_symbol_mapping,
+    map_field_name_to_function,
+    single_stock_data_mapping,
+)
 from fmp import fmp_data
 from data.data_cache.arctic import save_dataframe_to_arctic
 
@@ -44,7 +46,9 @@ def get_single_stock_data(data_save_path):
                 # TODO: What if these functions have different args? We shouldn't do this IMO
                 result[field] = function_to_apply(remote_symbols_from_index)
 
-        save_dataframe_to_arctic("equities", result["historic_price_full"], "adjusted_prices")
+        save_dataframe_to_arctic(
+            "equities", result["historic_price_full"], "adjusted_prices"
+        )
         print("Saved Stock Level Data")
 
 
@@ -65,7 +69,9 @@ def get_index_level_data(data_save_path):
             # TODO: What if these functions have different args? We shouldn't do this IMO
             result[field_name] = function_to_apply(index_symbols)
 
-        save_dataframe_to_arctic("equities", result["historic_price_full"], "adjusted_prices")
+        save_dataframe_to_arctic(
+            "equities", result["historic_price_full"], "adjusted_prices"
+        )
         print("Saved Index Level Data")
 
 
