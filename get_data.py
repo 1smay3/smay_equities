@@ -19,7 +19,7 @@ COUNT_DEBUG_NUMBER_OF_SYMBOLS = 10
 logger = logging.getLogger(__name__)
 
 
-def get_single_stock_data(data_save_path):
+def get_single_stock_data():
     """
     For the parsed type and exchange (from our config), gather the relevant data
     and data_cache in a format accessible for research (dates x stocks)
@@ -52,7 +52,7 @@ def get_single_stock_data(data_save_path):
         print("Saved Stock Level Data")
 
 
-def get_index_level_data(data_save_path):
+def get_index_level_data():
     # Run for all elements of the schedule
     for field_name, index_list in index_level_data_mapping.items():
         index_symbols = [
