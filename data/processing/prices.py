@@ -1,10 +1,10 @@
 import numpy as np
-import pandas as pd
+import polars as pl
 
 from config import ANNUAL_TRADING_DAYS
 
 
-def calculate_daily_return(adjusted_close_prices: pd.DataFrame) -> pd.DataFrame:
+def calculate_daily_return(adjusted_close_prices: pl.DataFrame) -> pl.DataFrame:
     """
     Calculates total daily return from adjusted prices, close to close
     """
@@ -12,8 +12,8 @@ def calculate_daily_return(adjusted_close_prices: pd.DataFrame) -> pd.DataFrame:
 
 
 def calculate_implied_market_return(
-    adjusted_close_price_return: pd.DataFrame,
-) -> pd.DataFrame:
+    adjusted_close_price_return: pl.DataFrame,
+) -> pl.DataFrame:
     """
     Infer the market return from the equal-weighted return of all stocks
     """
@@ -21,11 +21,11 @@ def calculate_implied_market_return(
 
 
 def calculate_trailing_volatility(
-    adjusted_close_price_return: pd.DataFrame,
+    adjusted_close_price_return: pl.DataFrame,
     lookback=60,
     exponential=True,
     lower_clip=0.05,
-) -> pd.DataFrame:
+) -> pl.DataFrame:
     if exponential:
         trailing_volatility = adjusted_close_price_return.ewm(
             lookback, min_periods=int(lookback * 0.75)

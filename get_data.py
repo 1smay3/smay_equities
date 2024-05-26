@@ -12,7 +12,7 @@ from data.schedule import (data_name_to_endpoint_mapping,
 from fmp import fmp_data
 from data.data_cache.arctic import save_dataframe_to_arctic
 
-COUNT_DEBUG_NUMBER_OF_SYMBOLS = 200
+COUNT_DEBUG_NUMBER_OF_SYMBOLS = 10
 
 logger = logging.getLogger(__name__)
 
