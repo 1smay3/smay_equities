@@ -129,6 +129,8 @@ def gather_symbols_from_index_no_survivorship(symbol):
 
 
 PRICES_DATETIME_FORMAT = "%Y-%m-%d"
+
+
 def gather_simple_prices(symbols_strings, field="adjClose") -> pl.DataFrame:
     """
     Function to be exposed externally to gather prices for many tickers for a single
@@ -139,11 +141,14 @@ def gather_simple_prices(symbols_strings, field="adjClose") -> pl.DataFrame:
     for price_info in prices:
         if price_info:
             simple_prices_df = pl.DataFrame(price_info["historical"])[["date", field]]
-            simple_prices_df = simple_prices_df.with_columns(pl.col("date").str.strptime(pl.Date, format=PRICES_DATETIME_FORMAT, strict=False))
-            simple_prices_df = simple_prices_df.rename({"adjClose": price_info["symbol"]})
+            simple_prices_df = simple_prices_df.with_columns(
+                pl.col("date").str.strptime(
+                    pl.Date, format=PRICES_DATETIME_FORMAT, strict=False
+                )
+            )
+            simple_prices_df = simple_prices_df.rename(
+                {"adjClose": price_info["symbol"]}
+            )
             all_symbols_data.append(simple_prices_df)
 
     return concatenate_dataframes(all_symbols_data).sort("date")
-
-
-
